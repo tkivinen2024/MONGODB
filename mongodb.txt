@@ -1,0 +1,165 @@
+	test> show dbs
+		acme    72.00 KiB
+		admin   40.00 KiB
+		config  72.00 KiB
+		local   40.00 KiB
+		test1   40.00 KiB
+	test> use test1
+		switched to db test1
+	test1> show collections
+		Products
+	test1> db.dropDatabase()
+		{ ok: 1, dropped: 'test1' }
+	test1> show dbs
+		acme    72.00 KiB
+		admin   40.00 KiB
+		config  72.00 KiB
+		local   40.00 KiB
+	..........................................
+	test1> use acme
+		switched to db acme
+	acme> show dbs
+		acme    72.00 KiB
+		admin   40.00 KiB
+		config  72.00 KiB
+		local   40.00 KiB
+	acme> db
+		acme
+	acme> db.createCollection('posts')
+		{ ok: 1 }
+	acme> show collections
+		posts
+	..........................................
+	db.posts.insert({title: 'Post One',	
+					body: 'Body of post one',	
+					category: 'News',	
+					likes: 4,	
+					tags: ['news', 'events'],	
+					user: {	name: 'John Doe',	
+					status: 'author'	},	
+					date: Date()})
+					
+	..........................................
+	db.posts.insertMany([
+		{
+			title: 'Post Two',	
+			body: 'Body of post two',	
+			category: 'Technology',	
+			date: Date()
+		},
+		{
+			title: 'Post Three',	
+			body: 'Body of post three',	
+			category: 'News',	
+			date: Date()
+		},
+		{
+			title: 'Post Four',	
+			body: 'Body of post four',	
+			category: 'Entertainment',	
+			date: Date()
+		}
+		])
+	..........................................
+	db.posts.find()
+	db.posts.find().pretty()
+
+	db.posts.find({category: 'News'})
+	db.posts.find.sort({title:1}).pretty()
+	db.posts.find().sort({title:1}).pretty()
+	
+	db.posts.find({category: 'News'}).count()
+	db.posts.find().limit(2)
+	
+	db.posts.find().sort({title:-1}).limit(2)
+	
+	db.posts.find().forEach(function(doc) {print('Blog Post: ' + doc.title) })
+	
+	db.posts.findOne({category: 'News'})
+	..........................................
+	
+	db.posts.update({title: 'Post Two'},
+		{
+			title: 'Post Two',
+			body: 'New post 2 body',
+			date: Date()
+		},
+		{
+			upsert: true
+		}
+	)
+	===> ERROR
+	
+	db.posts.update({title: 'Post Two'},
+	{
+		$set: {
+			body: 'Body of post 2',
+			category: 'Technology'
+		}
+	}
+	)
+	
+	db.posts.find({title: 'Post Two'}).pretty()
+	
+	db.posts.find({title: 'Post One'}).pretty()
+	..........................................
+	
+	db.posts.update({title: 'Post One'}, {$rename: {likes: 'views'}})
+	db.posts.find({title: 'Post One'}).pretty()
+	..........................................
+	db.posts.remove({title: 'Post Four'})
+	db.posts.find()
+	..........................................
+
+	db.posts.update({title: 'Post One'},
+	{
+		$set: {
+			comments: [
+				{
+				user: 'Mary Williams',
+				body: 'Comment One',
+				date: Date()
+				},
+				{
+				user: 'Harry White',
+				body: 'Comment Two',
+				date: Date()
+				}
+				
+			]
+			
+		}
+	}
+	)
+	db.posts.find({title: 'Post One'}).pretty()
+	..........................................
+	
+	db.posts.find({
+	comments: {
+	$elemMatch: {
+		user: 'Mary Williams'
+	}
+	}
+	}
+	)
+	
+	db.posts.createIndex({title: 'text'})
+	{
+		"createdCollectionAutomatically": false,
+		"numIndexesBefore": 1,
+		"numIndexesAfter": 2,
+		"ok": 1
+	}
+	
+	db.posts.find({
+		$text: {
+			$search: "\"Post O\""}})
+			
+	..........................................
+	
+	db.posts.update({title: 'Post Two'}, {$set: {views: 10}})
+	db.posts.find({views: {$gt:3}})
+	=====================================================================================
+
+
+	http://localhost:5000/api/members
