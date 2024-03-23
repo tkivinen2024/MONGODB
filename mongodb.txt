@@ -1,3 +1,11 @@
+// -------------------------------------------------
+// --- 18.3. - 23.3.2024 Timo Kivinen
+// ---
+// ---
+// -------------------------------------------------
+
+RUN mongosh.exe
+
 	test> show dbs
 		acme    72.00 KiB
 		admin   40.00 KiB
@@ -65,7 +73,6 @@
 	db.posts.find().pretty()
 
 	db.posts.find({category: 'News'})
-	db.posts.find.sort({title:1}).pretty()
 	db.posts.find().sort({title:1}).pretty()
 	
 	db.posts.find({category: 'News'}).count()
@@ -143,13 +150,14 @@
 	}
 	)
 	
-	db.posts.createIndex({title: 'text'})
+	db.posts.createIndex({title: "text"})
 	{
-		"createdCollectionAutomatically": false,
-		"numIndexesBefore": 1,
-		"numIndexesAfter": 2,
+		"createdCollectionAutomatically" : false,
+		"numIndexesBefore" : 1,
+		"numIndexesAfter" : 2,
 		"ok": 1
-	}
+	};
+
 	
 	db.posts.find({
 		$text: {
